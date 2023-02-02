@@ -22,6 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
   charactersResults$: Observable<any>;
   planetAndCharactersResults$: Observable<any>;
   isLoading: boolean = false;
+  loadingSubcription: Subscription;
 
   constructor(private mockDataService: MockDataService) {}
 
@@ -52,7 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initLoadingState(): void {
-    combineLatest(
+    this.loadingSubcription = combineLatest(
       this.mockDataService.getCharactersLoader(),
       this.mockDataService.getPlanetLoader()
     ).subscribe((elements) => {
@@ -61,9 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // 5.2 Unsubscribe from all subscriptions
-    // YOUR CODE STARTS HERE
-    // YOUR CODE ENDS HERE
+    this.loadingSubcription.unsubscribe();
   }
 
   areAllValuesTrue(elements: boolean[]): boolean {
