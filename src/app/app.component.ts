@@ -35,18 +35,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initCharacterEvents(): void {
-    // 1.2. Add API call on each user input. Use mockDataService.getCharacters - to make get request.
-
-    // 2. Since we don't want to spam our service add filter by input value and do not call API until a user enters at least 3 chars.
-
     // 3. Add debounce to prevent API calls until user stop typing.
 
-    this.charactersResults$ = this.searchTermByCharacters
-      .pipe
-      // YOUR CODE STARTS HERE
-
-      // YOUR CODE ENDS HERE
-      ();
+    this.charactersResults$ = this.searchTermByCharacters.pipe(
+      map((query) => (query ? query.trim() : '')),
+      filter((query) => query.length >= 3),
+      switchMap((query: string) => {
+        console.log('work');
+        return this.mockDataService.getCharacters(query);
+      })
+    );
   }
 
   loadCharactersAndPlanet(): void {
