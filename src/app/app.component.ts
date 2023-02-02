@@ -4,6 +4,7 @@ import {
   filter,
   forkJoin,
   map,
+  debounceTime,
   Observable,
   Subject,
   Subscription,
@@ -35,23 +36,19 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initCharacterEvents(): void {
-    // 3. Add debounce to prevent API calls until user stop typing.
-
     this.charactersResults$ = this.searchTermByCharacters.pipe(
       map((query) => (query ? query.trim() : '')),
       filter((query) => query.length >= 3),
-      switchMap((query: string) => {
-        console.log('work');
-        return this.mockDataService.getCharacters(query);
-      })
+      debounceTime(500),
+      switchMap((query: string) => this.mockDataService.getCharacters(query))
     );
   }
 
   loadCharactersAndPlanet(): void {
-    // 4. On clicking the button 'Load Characters And Planets', it is necessary to process two requests and combine the results of both requests into one result array. As a result, a list with the names of the characters and the names of the planets is displayed on the screen.
-    // Your code should looks like this: this.planetAndCharactersResults$ = /* Your code */
-    // YOUR CODE STARTS HERE
-    // YOUR CODE ENDS HERE
+    this.planetAndCharactersResults$ = forkJoin(
+      this.mockDataService.getPlatents(),
+      this.mockDataService.getCharacters()
+    ).pipe(map((data: any) => data.flat()));
   }
 
   initLoadingState(): void {
