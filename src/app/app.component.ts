@@ -52,13 +52,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initLoadingState(): void {
-    /* 5.1. Let's add loader logic to our page. For each request, we have an observable that contains the state of the request. When we send a request the value is true, when the request is completed, the value becomes false. You can get value data with mockDataService.getCharactersLoader() and mockDataService.getPlanetLoader().
-    
-    - Combine the value of each of the streams.
-    - Subscribe to changes
-    - Check the received value using the areAllValuesTrue function and pass them to the isLoading variable. */
-    // YOUR CODE STARTS HERE
-    // YOUR CODE ENDS HERE
+    combineLatest(
+      this.mockDataService.getCharactersLoader(),
+      this.mockDataService.getPlanetLoader()
+    ).subscribe((elements) => {
+      this.isLoading = this.areAllValuesTrue(elements);
+    });
   }
 
   ngOnDestroy(): void {
